@@ -5,6 +5,9 @@
 - **Local images**: `nova-rms-api` / `nova-rms-worker` currently built on the workstation; tag and push to your registry (Docker Hub, GHCR, ECR, etc.) before production use.
 - **Minikube base image**: `gcr.io/k8s-minikube/kicbase:v0.0.48` (`sha256:7171c97a51623558720f8e5878e4f4637da093e2f2ed589997bedc6c1549b2b1`) runs the Minikube control plane.
 
+## CLI prerequisites
+- Run `pwsh tools/install-tools.ps1` (or copy the commands inside) to download Helm/Terraform into `tools/`. The binaries are intentionally excluded from git history; rerun the script whenever you need to bump versions.
+
 ## Minikube Container
 - **Name**: `minikube`
 - **Ports** (container -> host):

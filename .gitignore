@@ -8,6 +8,8 @@ test-results/
 .env
 .env.local
 .env.*.local
+tools/helm/windows-amd64/helm.exe
+tools/terraform/terraform.exe
 
 # Logs
 logs/
