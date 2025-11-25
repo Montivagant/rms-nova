@@ -1,0 +1,431 @@
+{
+  "version": "1.0.0",
+  "generated_at": "2025-10-03T00:00:00Z",
+  "modules": [
+    {
+      "id": "identity",
+      "name": "Identity & Tenant Registry",
+      "category": "core",
+      "features": [
+        {
+          "id": "authentication",
+          "name": "Authentication",
+          "actions": ["login", "logout", "refresh", "change_password", "reset_password", "enable_mfa", "disable_mfa"]
+        },
+        {
+          "id": "users",
+          "name": "User Management",
+          "actions": ["create", "read", "update", "deactivate", "reactivate", "invite", "resend_invite"]
+        },
+        {
+          "id": "tenant_registrations",
+          "name": "Tenant Registrations",
+          "actions": ["submit", "read", "approve", "reject"]
+        }
+      ]
+    },
+    {
+      "id": "rbac",
+      "name": "Role-Based Access Control",
+      "category": "core",
+      "features": [
+        {
+          "id": "roles",
+          "name": "Roles",
+          "actions": ["create", "read", "update", "delete", "assign", "clone", "preview"]
+        },
+        {
+          "id": "permissions",
+          "name": "Permissions",
+          "actions": ["list", "inspect", "export"]
+        }
+      ]
+    },
+    {
+      "id": "module_registry",
+      "name": "Module Registry",
+      "category": "core",
+      "features": [
+        {
+          "id": "catalogue",
+          "name": "Module Catalogue",
+          "actions": ["list", "diff", "publish"]
+        },
+        {
+          "id": "feature_flags",
+          "name": "Feature Flags",
+          "actions": ["read", "update", "schedule"]
+        }
+      ]
+    },
+    {
+      "id": "billing",
+      "name": "Billing & Plans",
+      "category": "platform",
+      "features": [
+        {
+          "id": "plans",
+          "name": "Plans",
+          "actions": ["create", "read", "update", "archive"]
+        },
+        {
+          "id": "subscriptions",
+          "name": "Subscriptions",
+          "actions": ["activate", "upgrade", "downgrade", "cancel", "pause"]
+        },
+        {
+          "id": "invoices",
+          "name": "Invoices",
+          "actions": ["generate", "read", "send", "download", "record_payment"]
+        },
+        {
+          "id": "webhooks",
+          "name": "Payment Webhooks",
+          "actions": ["ingest", "retry", "inspect"]
+        }
+      ]
+    },
+    {
+      "id": "support",
+      "name": "Support & Operations",
+      "category": "platform",
+      "features": [
+        {
+          "id": "tickets",
+          "name": "Support Tickets",
+          "actions": ["create", "read", "assign", "respond", "close", "reopen"]
+        },
+        {
+          "id": "announcements",
+          "name": "Announcements",
+          "actions": ["create", "read", "schedule", "publish", "retract"]
+        },
+        {
+          "id": "maintenance",
+          "name": "Maintenance Windows",
+          "actions": ["schedule", "read", "update", "cancel"]
+        },
+        {
+          "id": "flags",
+          "name": "Tenant Flags",
+          "actions": ["read", "set", "clear"]
+        }
+      ]
+    },
+    {
+      "id": "backups",
+      "name": "Backups & DR",
+      "category": "platform",
+      "features": [
+        {
+          "id": "snapshots",
+          "name": "Snapshots",
+          "actions": ["trigger", "read", "verify", "delete"]
+        },
+        {
+          "id": "exports",
+          "name": "Tenant Exports",
+          "actions": ["request", "read_status", "download", "revoke"]
+        },
+        {
+          "id": "restores",
+          "name": "Restore Workflows",
+          "actions": ["initiate", "approve", "execute", "audit"]
+        }
+      ]
+    },
+    {
+      "id": "pos",
+      "name": "Point of Sale",
+      "category": "business",
+      "dependencies": ["inventory", "menu"],
+      "features": [
+        {
+          "id": "tickets",
+          "name": "Tickets",
+          "actions": ["create", "read", "update", "void", "refund", "reopen"]
+        },
+        {
+          "id": "payments",
+          "name": "Payments",
+          "actions": ["collect", "read", "refund", "reconcile"]
+        },
+        {
+          "id": "shifts",
+          "name": "Shifts",
+          "actions": ["open", "close", "read", "adjust"]
+        },
+        {
+          "id": "receipts",
+          "name": "Receipts",
+          "actions": ["generate", "email", "print"]
+        }
+      ]
+    },
+    {
+      "id": "inventory",
+      "name": "Inventory",
+      "category": "business",
+      "features": [
+        {
+          "id": "items",
+          "name": "Items",
+          "actions": ["create", "read", "update", "archive", "restore"]
+        },
+        {
+          "id": "stock_levels",
+          "name": "Stock Levels",
+          "actions": ["read", "adjust", "import", "export"]
+        },
+        {
+          "id": "movements",
+          "name": "Movements",
+          "actions": ["create", "read", "approve_transfer", "cancel_transfer"]
+        },
+        {
+          "id": "counts",
+          "name": "Stock Counts",
+          "actions": ["schedule", "start", "complete", "reconcile"]
+        },
+        {
+          "id": "locations",
+          "name": "Locations",
+          "actions": ["read", "manage_assignments"]
+        },
+        {
+          "id": "alerts",
+          "name": "Alerts",
+          "actions": ["read", "acknowledge", "mute"]
+        }
+      ]
+    },
+    {
+      "id": "menu",
+      "name": "Menu & Catalog",
+      "category": "business",
+      "features": [
+        {
+          "id": "categories",
+          "name": "Categories",
+          "actions": ["create", "read", "update", "delete", "reorder"]
+        },
+        {
+          "id": "items",
+          "name": "Menu Items",
+          "actions": ["create", "read", "update", "retire", "clone"]
+        },
+        {
+          "id": "modifiers",
+          "name": "Modifiers",
+          "actions": ["create", "read", "update", "delete"]
+        },
+        {
+          "id": "recipes",
+          "name": "Recipes",
+          "actions": ["define", "read", "update", "archive"]
+        },
+        {
+          "id": "pricing",
+          "name": "Pricing",
+          "actions": ["set", "override", "schedule_change"]
+        }
+      ]
+    },
+    {
+      "id": "loyalty",
+      "name": "Loyalty & Engagement",
+      "category": "business",
+      "dependencies": ["pos"],
+      "features": [
+        {
+          "id": "accounts",
+          "name": "Loyalty Accounts",
+          "actions": ["create", "read", "update", "deactivate", "reactivate"]
+        },
+        {
+          "id": "transactions",
+          "name": "Points Transactions",
+          "actions": ["earn", "read", "redeem", "adjust", "expire"]
+        },
+        {
+          "id": "rules",
+          "name": "Program Rules",
+          "actions": ["read", "update", "publish", "suspend"]
+        }
+      ]
+    },
+    {
+      "id": "orders_kds",
+      "name": "Orders & KDS",
+      "category": "business",
+      "dependencies": ["menu", "pos"],
+      "features": [
+        {
+          "id": "orders",
+          "name": "Orders",
+          "actions": ["create", "read", "update_status", "cancel"]
+        },
+        {
+          "id": "kds",
+          "name": "Kitchen Display",
+          "actions": ["view", "bump", "reroute", "delay"]
+        },
+        {
+          "id": "events",
+          "name": "Fulfilment Events",
+          "actions": ["publish", "read", "resolve"]
+        }
+      ]
+    },
+    {
+      "id": "reporting",
+      "name": "Reporting",
+      "category": "business",
+      "dependencies": ["pos"],
+      "features": [
+        {
+          "id": "dashboards",
+          "name": "Dashboards",
+          "actions": ["view_sales", "view_inventory", "configure"]
+        },
+        {
+          "id": "exports",
+          "name": "Exports",
+          "actions": ["request", "read_status", "download", "cancel"]
+        },
+        {
+          "id": "schedules",
+          "name": "Schedules",
+          "actions": ["create", "read", "update", "pause", "resume"]
+        }
+      ]
+    },
+    {
+      "id": "superadmin",
+      "name": "Superadmin Console",
+      "category": "admin",
+      "features": [
+        {
+          "id": "tenants",
+          "name": "Tenant Management",
+          "actions": ["list", "inspect", "adjust_plan", "toggle_modules", "impersonate"]
+        },
+        {
+          "id": "plans",
+          "name": "Plan Catalogue",
+          "actions": ["create", "read", "update", "retire"]
+        },
+        {
+          "id": "backups",
+          "name": "Platform Backups",
+          "actions": ["read_status", "trigger", "download", "delete"]
+        },
+        {
+          "id": "support_inbox",
+          "name": "Support Inbox",
+          "actions": ["triage", "assign", "escalate", "close"]
+        },
+        {
+          "id": "announcements",
+          "name": "Global Announcements",
+          "actions": ["create", "read", "schedule", "publish", "retract"]
+        }
+      ]
+    }
+  ],
+  "default_roles": [
+    {
+      "id": "business_owner",
+      "name": "Business Owner",
+      "description": "Full tenant control except platform-only actions",
+      "permissions": ["*", "!superadmin.*"],
+      "system": true
+    },
+    {
+      "id": "manager",
+      "name": "Manager",
+      "description": "Oversees daily operations and reports",
+      "permissions": [
+        "pos.*",
+        "inventory.*",
+        "menu.*",
+        "loyalty.*",
+        "orders_kds.*",
+        "reporting.*",
+        "identity.users.read",
+        "rbac.roles.read",
+        "support.tickets.create",
+        "support.tickets.read"
+      ],
+      "system": true
+    },
+    {
+      "id": "cashier",
+      "name": "Cashier",
+      "description": "Front-of-house ticketing and payments",
+      "permissions": [
+        "pos.tickets.*",
+        "pos.payments.collect",
+        "pos.receipts.generate",
+        "loyalty.transactions.earn",
+        "menu.items.read",
+        "inventory.items.read"
+      ],
+      "system": true
+    },
+    {
+      "id": "kitchen",
+      "name": "Kitchen",
+      "description": "Kitchen display operations",
+      "permissions": [
+        "orders_kds.kds.*",
+        "orders_kds.orders.read",
+        "menu.items.read"
+      ],
+      "system": true
+    },
+    {
+      "id": "inventory_manager",
+      "name": "Inventory Manager",
+      "description": "Inventory, recipes, and costing",
+      "permissions": [
+        "inventory.*",
+        "menu.recipes.*",
+        "reporting.exports.request"
+      ],
+      "system": true
+    },
+    {
+      "id": "superadmin",
+      "name": "Superadmin",
+      "description": "Platform operations",
+      "permissions": ["superadmin.*"],
+      "system": true,
+      "superadmin_only": true
+    }
+  ],
+  "dependencies": {
+    "pos": { "requires": ["inventory", "menu"] },
+    "orders_kds": { "requires": ["menu", "pos"] },
+    "reporting": { "requires": ["pos"], "recommends": ["inventory", "orders_kds"] },
+    "billing": { "required_for_paid_plans": true },
+    "backups": { "requires_features": ["support.maintenance.schedule"] }
+  },
+  "feature_flags": {
+    "global": [
+      { "key": "multi_location", "description": "Enable multiple locations per tenant", "default": false },
+      { "key": "advanced_reporting", "description": "Unlock OLAP dashboards", "default": false },
+      { "key": "api_integrations", "description": "Allow tenant-managed API keys", "default": false }
+    ],
+    "pos": [
+      { "key": "offline_queue", "description": "Queue tickets/payments offline", "default": true },
+      { "key": "customer_tabs", "description": "Support running tabs", "default": false }
+    ],
+    "inventory": [
+      { "key": "batch_tracking", "description": "Track lots and expiry", "default": false },
+      { "key": "barcode_scanning", "description": "Enable barcode scanner UI", "default": false }
+    ]
+  }
+}
+
+

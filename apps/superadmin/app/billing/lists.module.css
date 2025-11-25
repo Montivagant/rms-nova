@@ -1,0 +1,57 @@
+.container {
+  display: grid;
+  gap: var(--nova-spacing-md);
+  padding: clamp(2rem, 5vw, 3rem);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--nova-spacing-sm);
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.3rem);
+  color: var(--nova-color-surface);
+}
+
+.subtitle {
+  margin: 0.25rem 0 0;
+  color: rgba(226, 232, 240, 0.7);
+  font-size: 0.95rem;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+  color: var(--nova-color-text);
+}
+
+.table th {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--nova-color-text-muted);
+}
+
+.emptyCell {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--nova-color-text-muted);
+}

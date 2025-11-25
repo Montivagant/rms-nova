@@ -1,0 +1,90 @@
+name: Staging Billing Drill
+
+on:
+  schedule:
+    - cron: "0 9 * * 1" # Mondays at 09:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  drill:
+    name: Run staging drill
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Determine pnpm store path
+        id: pnpm-store
+        shell: bash
+        run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-store.outputs.path }}
+          key: ${{ runner.os }}-pnpm-drill-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Write staging drill env
+        shell: bash
+        env:
+          STAGING_DRILL_ENV: ${{ secrets.STAGING_DRILL_ENV }}
+        run: |
+          if [[ -z "${STAGING_DRILL_ENV}" ]]; then
+            echo "STAGING_DRILL_ENV GitHub secret must be configured to run this workflow." >&2
+            exit 1
+          fi
+          cat <<'EOF' > tests/drills/staging.drill.env
+${STAGING_DRILL_ENV}
+EOF
+
+      - name: Run staging billing drill
+        shell: bash
+        run: |
+          timestamp=$(date -u +"%Y%m%d-%H%M%S")
+          log_dir="tests/drills/logs/staging"
+          log_file="${log_dir}/${timestamp}.md"
+          mkdir -p "$log_dir"
+          echo "DRILL_LOG=${log_file}" >> "$GITHUB_ENV"
+          {
+            echo "# Automated Billing Plan Drill - Staging"
+            echo
+            echo "- Timestamp (UTC): ${timestamp}"
+            echo "- Operator: GitHub Actions"
+            echo
+            echo '```'
+          } > "$log_file"
+          if pnpm drill:billing --env-file tests/drills/staging.drill.env | tee -a "$log_file"; then
+            status="success"
+          else
+            status="failure"
+          fi
+          echo '```' >> "$log_file"
+          echo >> "$log_file"
+          echo "_Result: ${status}_." >> "$log_file"
+          if [[ "$status" != "success" ]]; then
+            exit 1
+          fi
+
+      - name: Upload drill log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: staging-billing-drill-log
+          path: ${{ env.DRILL_LOG }}
+          if-no-files-found: warn

@@ -1,0 +1,334 @@
+.container {
+  margin-top: clamp(1.5rem, 4vw, 2.5rem);
+  display: grid;
+  gap: var(--nova-spacing-md);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.headline {
+  margin: 0;
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  color: var(--nova-color-surface);
+}
+
+.error {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+  font-size: 0.95rem;
+  color: #f87171;
+}
+
+.feedback {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #22c55e;
+  border-left: 3px solid #22c55e;
+  padding-left: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.retry {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--nova-color-brand);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.retry:hover {
+  color: var(--nova-color-brand-hover);
+}
+
+.grid {
+  display: grid;
+  gap: var(--nova-spacing-sm);
+}
+
+.card {
+  width: 100%;
+}
+
+.card :global(.nova-card__header) {
+  font-size: 1.1rem;
+  color: var(--nova-color-text);
+}
+
+.card :global(.nova-card__content) {
+  display: grid;
+  gap: var(--nova-spacing-sm);
+}
+
+.cardBody {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--nova-spacing-sm);
+}
+
+.primaryMeta,
+.secondaryMeta {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--nova-color-text-muted);
+}
+
+.value {
+  font-weight: 600;
+  color: var(--nova-color-text);
+  word-break: break-word;
+}
+
+.badge {
+  align-self: flex-start;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--nova-radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.badgePending {
+  color: var(--nova-color-brand);
+  background-color: rgba(37, 99, 235, 0.12);
+  border-color: rgba(37, 99, 235, 0.3);
+}
+
+.badgeApproved {
+  color: #22c55e;
+  background-color: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.badgeRejected {
+  color: #f87171;
+  background-color: rgba(248, 113, 113, 0.12);
+  border-color: rgba(248, 113, 113, 0.4);
+}
+
+.timestamp {
+  font-size: 0.85rem;
+  color: var(--nova-color-text-muted);
+}
+
+.decisionMeta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.2rem 1rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: var(--nova-radius-sm);
+  background-color: rgba(148, 163, 184, 0.12);
+  color: var(--nova-color-text);
+  font-size: 0.9rem;
+}
+
+.decisionMeta dt {
+  font-weight: 600;
+}
+
+.decisionMeta dd {
+  margin: 0;
+  color: var(--nova-color-text-muted);
+}
+
+.checklistWrapper {
+  border: 1px dashed rgba(148, 163, 184, 0.4);
+  border-radius: var(--nova-radius-md);
+  padding: var(--nova-spacing-sm);
+  display: grid;
+  gap: var(--nova-spacing-xs);
+  background-color: rgba(15, 23, 42, 0.35);
+}
+
+.checklistHeading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.checklistTitle {
+  font-weight: 600;
+  color: var(--nova-color-text);
+}
+
+.checklistCaption {
+  font-size: 0.85rem;
+  color: var(--nova-color-text-muted);
+}
+
+.checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.checklistLocked {
+  opacity: 0.55;
+}
+
+.checklistItem {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.checklistControl {
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 999px;
+  border: 2px solid rgba(148, 163, 184, 0.6);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.checklistControl::after {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background-color: transparent;
+  transition: background-color 150ms ease;
+}
+
+.checklistControl[data-state="active"] {
+  border-color: var(--nova-color-brand);
+}
+
+.checklistControl[data-state="active"]::after {
+  background-color: var(--nova-color-brand);
+}
+
+.checklistLabel {
+  flex: 1;
+  color: var(--nova-color-text);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.toggleWrapper {
+  border-radius: var(--nova-radius-md);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  padding: var(--nova-spacing-sm);
+  display: grid;
+  gap: var(--nova-spacing-xs);
+  background: rgba(15, 23, 42, 0.25);
+}
+
+.toggleHeading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.toggleTitle {
+  font-weight: 600;
+  color: var(--nova-color-text);
+}
+
+.toggleCaption {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--nova-color-text-muted);
+}
+
+.toggleGrid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.toggleOption {
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-radius: var(--nova-radius-md);
+  padding: 0.45rem 0.75rem;
+  background-color: rgba(15, 23, 42, 0.35);
+  display: grid;
+  gap: 0.35rem;
+}
+
+.toggleButton {
+  width: 100%;
+  justify-content: flex-start;
+  text-align: left;
+  font-weight: 600;
+  color: var(--nova-color-text);
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background-color: rgba(15, 23, 42, 0.45);
+  gap: 0.5rem;
+  position: relative;
+}
+
+.toggleButton::before {
+  content: "";
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  border: 2px solid rgba(148, 163, 184, 0.65);
+  transition: all 150ms ease;
+}
+
+.toggleButton[data-state="on"]::before {
+  border-color: var(--nova-color-brand);
+  background-color: var(--nova-color-brand);
+  box-shadow: 0 0 6px rgba(37, 99, 235, 0.35);
+}
+
+.toggleButton[data-state="on"] {
+  border-color: var(--nova-color-brand);
+  color: var(--nova-color-brand);
+  background-color: rgba(37, 99, 235, 0.15);
+}
+
+.toggleButton:focus-visible {
+  outline: 2px solid var(--nova-color-brand);
+  outline-offset: 2px;
+}
+
+.toggleButton:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+.toggleOptionLocked {
+  opacity: 0.55;
+}
+
+.toggleDescription {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--nova-color-text-muted);
+}
+
+.actions {
+  display: flex;
+  gap: var(--nova-spacing-sm);
+  flex-wrap: wrap;
+}
+
+.emptyState :global(.nova-card__content) {
+  color: var(--nova-color-text-muted);
+  font-size: 0.95rem;
+}

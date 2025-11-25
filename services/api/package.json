@@ -1,0 +1,43 @@
+{
+    "name": "@nova/api",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "dev": "tsx watch src/index.ts",
+        "build": "tsup src/index.ts --format esm --sourcemap",
+        "db:migrate": "tsx scripts/run-migrations.ts",
+        "db:check": "tsx scripts/check-connection.ts",
+        "test": "vitest run",
+        "db:rollback": "tsx scripts/rollback-migration.ts",
+        "db:status": "tsx scripts/migration-status.ts"
+    },
+    "dependencies": {
+        "@fastify/cors": "^8.5.0",
+        "@fastify/helmet": "^11.1.1",
+        "@fastify/rate-limit": "^8.1.1",
+        "@fastify/sensible": "^5.2.0",
+        "@fastify/under-pressure": "^8.5.2",
+        "@nova/auth": "workspace:*",
+        "@nova/billing": "workspace:*",
+        "@nova/sample-data": "workspace:*",
+        "@nova/module-registry": "workspace:*",
+        "@nova/rbac": "workspace:*",
+        "bullmq": "^5.12.5",
+        "dotenv": "^16.4.5",
+        "drizzle-orm": "^0.32.2",
+        "fastify": "^4.29.1",
+        "fastify-plugin": "^5.1.0",
+        "pg": "^8.11.5",
+        "pino": "^9.3.2",
+        "prom-client": "^15.1.1",
+        "zod": "^3.23.8"
+    },
+    "devDependencies": {
+        "pino-pretty": "^11.2.2",
+        "tsup": "^7.2.0",
+        "tsx": "^4.10.2"
+    }
+}

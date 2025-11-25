@@ -1,0 +1,108 @@
+global:
+  imageRegistry: ""
+  imageTag: latest
+  imagePullSecrets: []
+
+api:
+  replicaCount: 2
+  image:
+    repository: nova-rms-api
+    pullPolicy: IfNotPresent
+    tag: latest
+  command: []
+  args: []
+  service:
+    type: ClusterIP
+    port: 3000
+  resources: {}
+  env:
+    - name: NODE_ENV
+      value: "production"
+    - name: DATABASE_URL
+      valueFrom:
+        secretKeyRef:
+          name: nova-api-secrets
+          key: database-url
+    - name: REDIS_URL
+      valueFrom:
+        secretKeyRef:
+          name: nova-api-secrets
+          key: redis-url
+    - name: JWT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: nova-api-secrets
+          key: jwt-secret
+    - name: REFRESH_TOKEN_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: nova-api-secrets
+          key: refresh-token-secret
+  extraEnv: []
+  extraEnvFrom: []
+  podAnnotations: {}
+  podLabels: {}
+  livenessProbe:
+    httpGet:
+      path: /v1/health
+      port: http
+  readinessProbe:
+    httpGet:
+      path: /v1/health
+      port: http
+  resourcesPreset: null
+
+worker:
+  replicaCount: 1
+  image:
+    repository: nova-rms-worker
+    pullPolicy: IfNotPresent
+    tag: latest
+  command: []
+  args: []
+  ports:
+    - name: health
+      containerPort: 3001
+      protocol: TCP
+  resources: {}
+  env:
+    - name: NODE_ENV
+      value: "production"
+    - name: DATABASE_URL
+      valueFrom:
+        secretKeyRef:
+          name: nova-worker-secrets
+          key: database-url
+    - name: REDIS_URL
+      valueFrom:
+        secretKeyRef:
+          name: nova-worker-secrets
+          key: redis-url
+    - name: BILLING_WEBHOOK_QUEUE_NAME
+      value: billing-webhooks
+    - name: WORKER_HEALTH_PORT
+      value: "3001"
+    - name: WORKER_HEALTH_HOST
+      value: "0.0.0.0"
+  extraEnv: []
+  extraEnvFrom: []
+  podAnnotations: {}
+  podLabels: {}
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: health
+  readinessProbe:
+    httpGet:
+      path: /readyz
+      port: health
+
+serviceAccount:
+  create: true
+  name: ""
+
+rbac:
+  create: false
+
+podSecurityContext: {}
+securityContext: {}

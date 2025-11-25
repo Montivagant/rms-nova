@@ -1,0 +1,15 @@
+global:
+  imageRegistry: gcr.io
+  imageTag: staging
+
+api:
+  image:
+    repository: rms-nova/nova-rms-api
+    tag: staging
+    pullPolicy: IfNotPresent
+
+worker:
+  image:
+    repository: rms-nova/nova-rms-worker
+    tag: staging
+    pullPolicy: IfNotPresent

@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "jsx": "preserve",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "types": ["node", "vitest/globals"],
+    "baseUrl": ".",
+    "paths": {
+      "@nova/*": ["packages/*/src"],
+      "@nova/services/*": ["services/*/src"],
+      "@nova/apps/*": ["apps/*/src"],
+      "@nova/module-registry/defaults": ["packages/module-registry/src/defaults.ts"],
+      "@components/*": ["apps/portal/components/*", "apps/superadmin/components/*"],
+      "@lib/*": ["apps/portal/lib/*", "apps/superadmin/lib/*"],
+      "@/*": ["apps/portal/app/*", "apps/superadmin/app/*"]
+    }
+  }
+}

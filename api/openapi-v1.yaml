@@ -1,0 +1,1860 @@
+openapi: 3.0.3
+info:
+  title: Nova RMS API
+  version: 1.0.0
+  description: REST surface for Identity, Tenant Registry, RBAC, Module Registry, Superadmin Ops, Billing, Support, POS, and Inventory modules.
+servers:
+  - url: https://api.nova-rms.com/v1
+    description: Production
+  - url: https://staging-api.nova-rms.com/v1
+    description: Staging
+  - url: http://localhost:3000/v1
+    description: Local development
+security:
+  - BearerAuth: []
+tags:
+  - name: Authentication
+  - name: Tenants
+  - name: RBAC
+  - name: Module Registry
+  - name: Superadmin
+  - name: Billing
+  - name: Support
+  - name: POS
+  - name: Inventory
+paths:
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: Authenticate and issue access tokens
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                tenant_alias:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTokens'
+        '401':
+          $ref: '#/components/responses/AuthError'
+  /tenant/registrations:
+    post:
+      tags: [Tenants]
+      summary: Submit business registration
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationInput'
+      responses:
+        '202':
+          description: Registration accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegistrationStatus'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+  /superadmin/registrations:
+    get:
+      tags: [Superadmin]
+      summary: List registration requests
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [pending, approved, rejected]
+      responses:
+        '200':
+          description: Registrations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Registration'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+  /superadmin/registrations/{registrationId}/modules:
+    patch:
+      tags: [Superadmin]
+      summary: Update module toggles for a pending registration
+      parameters:
+        - $ref: '#/components/parameters/RegistrationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [modules]
+              properties:
+                modules:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/RegistrationModuleToggle'
+      responses:
+        '200':
+          description: Updated module toggles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      modules:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/RegistrationModuleToggle'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+  /superadmin/registrations/{registrationId}/decision:
+    post:
+      tags: [Superadmin]
+      summary: Approve or reject registration
+      parameters:
+        - $ref: '#/components/parameters/RegistrationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision]
+              properties:
+                decision:
+                  type: string
+                  enum: [approve, reject]
+                plan_id:
+                  type: string
+                  format: uuid
+                modules:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/RegistrationModuleToggle'
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Decision stored
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegistrationStatus'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+  /tenants:
+    get:
+      tags: [Tenants]
+      summary: List tenants
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Tenants
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tenant'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+  /tenants/{tenantId}/modules:
+    patch:
+      tags: [Module Registry]
+      summary: Toggle modules/feature flags for tenant
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                modules:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/TenantModuleInput'
+      responses:
+        '200':
+          description: Updated configuration
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  modules:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TenantModule'
+  /rbac/roles:
+    get:
+      tags: [RBAC]
+      summary: List roles
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Roles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Role'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [RBAC]
+      summary: Create role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, permissions]
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                permissions:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '201':
+          description: Role created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+  /module-registry/catalogue:
+    get:
+      tags: [Module Registry]
+      summary: Retrieve module catalogue
+      responses:
+      '200':
+        description: Catalogue
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModuleCatalogue'
+  /billing/plans:
+    get:
+      tags: [Billing]
+      summary: List plans
+      responses:
+        '200':
+          description: Plans
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Plan'
+    post:
+      tags: [Billing]
+      summary: Create plan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanInput'
+      responses:
+        '201':
+          description: Plan created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plan'
+  /support/tickets:
+    get:
+      tags: [Support]
+      summary: List support tickets
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Tickets
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Ticket'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [Support]
+      summary: Create ticket
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketInput'
+      responses:
+        '201':
+          description: Ticket created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+  /pos/tickets:
+    get:
+      tags: [POS]
+      summary: List POS tickets
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: POS tickets
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TicketPOS'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [POS]
+      summary: Create POS ticket
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketPOSInput'
+      responses:
+        '201':
+          description: POS ticket created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketPOS'
+  /inventory/items:
+    get:
+      tags: [Inventory]
+      summary: List inventory items
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Inventory items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/InventoryItem'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [Inventory]
+      summary: Create inventory item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryItemInput'
+      responses:
+        '201':
+          description: Inventory item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryItem'
+  /portal/context:
+    get:
+      tags: [Portal]
+      summary: Retrieve portal runtime context (tenant + enabled modules)
+      responses:
+        '200':
+          description: Portal context payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortalContextResponse'
+        '401':
+          $ref: '#/components/responses/AuthError'
+  /portal/locations:
+    get:
+      tags: [Portal]
+      summary: Retrieve tenant location summaries (inventory + menu overrides)
+      responses:
+        '200':
+          description: Location summaries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PortalLocationSummary'
+        '401':
+          $ref: '#/components/responses/AuthError'
+  /portal/dashboard:
+    get:
+      tags: [Portal]
+      summary: Retrieve tenant dashboard snapshot
+      responses:
+        '200':
+          description: Dashboard snapshot
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PortalDashboardSnapshot'
+        '401':
+          $ref: '#/components/responses/AuthError'
+  /portal/menu/items:
+    get:
+      tags: [Portal]
+      summary: List tenant menu items with sales metadata
+      responses:
+        '200':
+          description: Menu items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PortalMenuItem'
+        '401':
+          $ref: '#/components/responses/AuthError'
+  /portal/menu/modifiers:
+    get:
+      tags: [Portal]
+      summary: List menu modifiers
+      responses:
+        '200':
+          description: Modifier list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PortalMenuModifier'
+        '401':
+          $ref: '#/components/responses/AuthError'
+  /portal/menu/modifiers/assignments:
+    get:
+      tags: [Portal]
+      summary: Fetch modifier assignments per menu item
+      responses:
+        '200':
+          description: Assignment map
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PortalMenuModifierAssignments'
+        '401':
+          $ref: '#/components/responses/AuthError'
+  /portal/menu/items/{itemId}:
+    patch:
+      tags: [Portal]
+      summary: Update a menu item
+      description: Requires `menu.items.update`.
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PortalMenuItemUpdateRequest'
+      responses:
+        '200':
+          description: Menu item updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PortalMenuItemUpdateResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/AuthError'
+        '403':
+          $ref: '#/components/responses/AuthzError'
+  /portal/menu/items/{itemId}/modifiers:
+    post:
+      tags: [Portal]
+      summary: Update menu item modifiers
+      description: Requires `menu.items.update`.
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PortalMenuItemModifierUpdateRequest'
+      responses:
+        '200':
+          description: Modifier assignments updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PortalMenuItemModifierUpdateResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/AuthError'
+        '403':
+          $ref: '#/components/responses/AuthzError'
+  /portal/inventory/items:
+    get:
+      tags: [Portal]
+      summary: View live inventory levels
+      responses:
+        '200':
+          description: Inventory items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PortalInventoryItem'
+        '401':
+          $ref: '#/components/responses/AuthError'
+  /portal/inventory/counts:
+    get:
+      tags: [Portal]
+      summary: List inventory count sessions
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+      responses:
+        '200':
+          description: Inventory count sessions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PortalInventoryCountSession'
+        '401':
+          $ref: '#/components/responses/AuthError'
+    post:
+      tags: [Portal]
+      summary: Create an inventory count session
+      description: Requires `inventory.counts.create`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PortalInventoryCountCreateRequest'
+      responses:
+        '200':
+          description: Count session created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PortalInventoryCountSession'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/AuthError'
+        '403':
+          $ref: '#/components/responses/AuthzError'
+  /portal/inventory/counts/{countId}:
+    parameters:
+      - name: countId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: [Portal]
+      summary: View an inventory count session with entries
+      responses:
+        '200':
+          description: Count detail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PortalInventoryCountDetail'
+        '401':
+          $ref: '#/components/responses/AuthError'
+        '403':
+          $ref: '#/components/responses/AuthzError'
+  /portal/inventory/counts/{countId}/items:
+    parameters:
+      - name: countId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      tags: [Portal]
+      summary: Record counted quantities for a session
+      description: Requires `inventory.counts.create`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PortalInventoryCountEntriesRequest'
+      responses:
+        '200':
+          description: Session updated with new entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PortalInventoryCountSession'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/AuthError'
+        '403':
+          $ref: '#/components/responses/AuthzError'
+  /portal/inventory/counts/{countId}/complete:
+    parameters:
+      - name: countId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      tags: [Portal]
+      summary: Complete a session and sync stock levels
+      description: Requires `inventory.counts.create`.
+      responses:
+        '200':
+          description: Count finalized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PortalInventoryCountDetail'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/AuthError'
+        '403':
+          $ref: '#/components/responses/AuthzError'
+  /portal/pos/tickets:
+    get:
+      tags: [Portal]
+      summary: List recent POS tickets for the tenant
+      responses:
+        '200':
+          description: Ticket feed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PortalTicket'
+        '401':
+          $ref: '#/components/responses/AuthError'
+    post:
+      tags: [Portal]
+      summary: Record a quick POS sale
+      description: Requires `pos.tickets.create`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PortalCreateTicketRequest'
+      responses:
+        '200':
+          description: Ticket and payment created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PortalCreateTicketResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/AuthError'
+        '403':
+          $ref: '#/components/responses/AuthzError'
+  /portal/payments:
+    get:
+      tags: [Portal]
+      summary: Payments summary and recent activity
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 5
+            maximum: 50
+            default: 15
+        - name: method
+          in: query
+          schema:
+            type: string
+            description: Filter by payment method (e.g., Card, Cash, Online)
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+            description: Start of the reporting range (YYYY-MM-DD, max 90 days from endDate)
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date
+            description: End of the reporting range (YYYY-MM-DD)
+        - name: export
+          in: query
+          schema:
+            type: string
+            enum: [none, csv]
+            default: none
+      responses:
+        '200':
+          description: Payments snapshot
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PortalPaymentsSnapshot'
+        '401':
+          $ref: '#/components/responses/AuthError'
+  /portal/reporting:
+    get:
+      tags: [Portal]
+      summary: Revenue and ticket reporting series
+      parameters:
+        - name: windowDays
+          in: query
+          schema:
+            type: integer
+            minimum: 7
+            maximum: 90
+            default: 7
+        - name: category
+          in: query
+          schema:
+            type: string
+            description: Filter top categories to a single category (case-insensitive)
+        - name: export
+          in: query
+          schema:
+            type: string
+            enum: [none, csv]
+            default: none
+      responses:
+        '200':
+          description: Reporting snapshot
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PortalReportingSnapshot'
+        '401':
+          $ref: '#/components/responses/AuthError'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    TenantId:
+      name: tenantId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    RegistrationId:
+      name: registrationId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    AuthTokens:
+      type: object
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        expires_in:
+          type: integer
+        token_type:
+          type: string
+          default: Bearer
+        user:
+          $ref: '#/components/schemas/User'
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        first_name:
+          type: string
+        last_name:
+          type: string
+        status:
+          type: string
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/RoleSummary'
+    RoleSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    RegistrationInput:
+      type: object
+      required: [business, owner]
+      properties:
+        business:
+          type: object
+          required: [legal_name, doing_business_as, contact_email, contact_phone]
+          properties:
+            legal_name:
+              type: string
+            doing_business_as:
+              type: string
+            contact_email:
+              type: string
+              format: email
+            contact_phone:
+              type: string
+            country:
+              type: string
+            timezone:
+              type: string
+        owner:
+          type: object
+          required: [first_name, last_name, email]
+          properties:
+            first_name:
+              type: string
+            last_name:
+              type: string
+            email:
+              type: string
+              format: email
+            phone:
+              type: string
+    RegistrationStatus:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        submitted_at:
+          type: string
+          format: date-time
+        decided_at:
+          type: string
+          format: date-time
+        reviewer_id:
+          type: string
+          format: uuid
+    Registration:
+      allOf:
+        - $ref: '#/components/schemas/RegistrationStatus'
+        - type: object
+          properties:
+            business:
+              $ref: '#/components/schemas/RegistrationInput/properties/business'
+            owner:
+              $ref: '#/components/schemas/RegistrationInput/properties/owner'
+            tenant_id:
+              type: string
+              format: uuid
+              nullable: true
+            modules:
+              type: array
+              items:
+                $ref: '#/components/schemas/RegistrationModuleToggle'
+    RegistrationModuleToggle:
+      type: object
+      required: [key, name, enabled]
+      properties:
+        key:
+          type: string
+        name:
+          type: string
+        enabled:
+          type: boolean
+        category:
+          type: string
+    Tenant:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        alias:
+          type: string
+        status:
+          type: string
+        plan_id:
+          type: string
+          format: uuid
+        timezone:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    TenantModuleInput:
+      type: object
+      required: [module_id, enabled]
+      properties:
+        module_id:
+          type: string
+        enabled:
+          type: boolean
+        features:
+          type: array
+          items:
+            type: object
+            required: [key, enabled]
+            properties:
+              key:
+                type: string
+              enabled:
+                type: boolean
+    TenantModule:
+      type: object
+      properties:
+        module_id:
+          type: string
+        enabled:
+          type: boolean
+        features:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+              enabled:
+                type: boolean
+              overridden:
+                type: boolean
+    Role:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: string
+        is_system:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+    ModuleCatalogue:
+      type: object
+      properties:
+        version:
+          type: string
+        modules:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              category:
+                type: string
+              features:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    actions:
+                      type: array
+                      items:
+                        type: string
+    Plan:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        price_cents:
+          type: integer
+        billing_cycle:
+          type: string
+        trial_days:
+          type: integer
+    PlanInput:
+      type: object
+      required: [name, price_cents, billing_cycle]
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price_cents:
+          type: integer
+        billing_cycle:
+          type: string
+          enum: [monthly, quarterly, annually]
+        trial_days:
+          type: integer
+    TicketInput:
+      type: object
+      required: [subject, body]
+      properties:
+        subject:
+          type: string
+        body:
+          type: string
+        category:
+          type: string
+        priority:
+          type: string
+    Ticket:
+      type: object
+      properties:
+        id:
+          type: string
+        tenant_id:
+          type: string
+        subject:
+          type: string
+        status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    TicketPOSInput:
+      type: object
+      required: [items]
+      properties:
+        table_number:
+          type: string
+        items:
+          type: array
+          items:
+            type: object
+            required: [menu_item_id, quantity]
+            properties:
+              menu_item_id:
+                type: string
+                format: uuid
+              quantity:
+                type: number
+              unit_price:
+                type: number
+                format: float
+    TicketPOS:
+      type: object
+      properties:
+        id:
+          type: string
+        tenant_id:
+          type: string
+        status:
+          type: string
+        subtotal:
+          type: number
+        total:
+          type: number
+        created_at:
+          type: string
+          format: date-time
+    InventoryItemInput:
+      type: object
+      required: [name, unit, category_id]
+      properties:
+        name:
+          type: string
+        sku:
+          type: string
+        unit:
+          type: string
+        category_id:
+          type: string
+          format: uuid
+        reorder_point:
+          type: number
+        reorder_quantity:
+          type: number
+        cost_per_unit:
+          type: number
+          format: float
+    InventoryItem:
+      type: object
+      properties:
+        id:
+          type: string
+        tenant_id:
+          type: string
+        name:
+          type: string
+        sku:
+          type: string
+        unit:
+          type: string
+        reorder_point:
+          type: number
+        reorder_quantity:
+          type: number
+        cost_per_unit:
+          type: number
+        current_stock:
+          type: number
+        active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        per_page:
+          type: integer
+        total:
+          type: integer
+        total_pages:
+          type: integer
+    PortalMetric:
+      type: object
+      properties:
+        label:
+          type: string
+        value:
+          type: string
+        delta:
+          type: string
+        helper:
+          type: string
+        trend:
+          type: string
+    PortalContextResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/PortalContext'
+    PortalContext:
+      type: object
+      properties:
+        tenant:
+          $ref: '#/components/schemas/PortalTenantSummary'
+        modules:
+          type: array
+          items:
+            $ref: '#/components/schemas/PortalModuleState'
+        featureFlags:
+          type: array
+          items:
+            $ref: '#/components/schemas/PortalFeatureFlagState'
+        permissions:
+          type: array
+          items:
+            type: string
+        roles:
+          type: array
+          items:
+            type: string
+    PortalLocationSummary:
+      type: object
+      properties:
+        locationId:
+          type: string
+        displayName:
+          type: string
+        totalInventoryItems:
+          type: integer
+        totalMenuItems:
+          type: integer
+    PortalTenantSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        alias:
+          type: string
+          nullable: true
+        status:
+          type: string
+        planName:
+          type: string
+        planId:
+          type: string
+          nullable: true
+        subscriptionStatus:
+          type: string
+          nullable: true
+        locationCount:
+          type: integer
+          nullable: true
+        nextPayout:
+          type: string
+          nullable: true
+        nextPayoutAt:
+          type: string
+          format: date-time
+          nullable: true
+    PortalModuleState:
+      type: object
+      properties:
+        moduleId:
+          type: string
+        enabled:
+          type: boolean
+        source:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    PortalFeatureFlagState:
+      type: object
+      properties:
+        moduleId:
+          type: string
+        featureKey:
+          type: string
+        enabled:
+          type: boolean
+        overridden:
+          type: boolean
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    PortalDashboardSnapshot:
+      type: object
+      properties:
+        metrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/PortalMetric'
+        topMenuItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/PortalMenuItem'
+        inventoryAlerts:
+          type: array
+          items:
+            $ref: '#/components/schemas/PortalInventoryAlert'
+        recentTickets:
+          type: array
+          items:
+            $ref: '#/components/schemas/PortalTicket'
+    PortalMenuItem:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+        price:
+          type: string
+        taxRate:
+          type: string
+        status:
+          type: string
+        soldToday:
+          type: number
+        grossToday:
+          type: string
+        recipeLinked:
+          type: boolean
+    PortalInventoryItem:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        unit:
+          type: string
+        onHand:
+          type: number
+        parLevel:
+          type: number
+        costPerUnit:
+          type: string
+    PortalInventoryCountSession:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+        locationId:
+          type: string
+        locationName:
+          type: string
+        scheduledAt:
+          type: string
+          format: date-time
+          nullable: true
+        startedAt:
+          type: string
+          format: date-time
+          nullable: true
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        totalItems:
+          type: integer
+        totalVariance:
+          type: number
+    PortalInventoryCountEntry:
+      type: object
+      properties:
+        itemId:
+          type: string
+        itemName:
+          type: string
+        sku:
+          type: string
+          nullable: true
+        unit:
+          type: string
+        systemQuantity:
+          type: number
+        countedQuantity:
+          type: number
+        variance:
+          type: number
+        notes:
+          type: string
+          nullable: true
+    PortalInventoryCountDetail:
+      type: object
+      properties:
+        session:
+          $ref: '#/components/schemas/PortalInventoryCountSession'
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/PortalInventoryCountEntry'
+    PortalInventoryCountCreateRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 120
+        locationId:
+          type: string
+          format: uuid
+        scheduledAt:
+          type: string
+          format: date-time
+        notes:
+          type: string
+          maxLength: 512
+    PortalInventoryCountEntriesRequest:
+      type: object
+      required: [entries]
+      properties:
+        entries:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [itemId, countedQuantity]
+            properties:
+              itemId:
+                type: string
+                format: uuid
+              countedQuantity:
+                type: number
+                minimum: 0
+              notes:
+                type: string
+                maxLength: 256
+                nullable: true
+    PortalInventoryAlert:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        unit:
+          type: string
+        onHand:
+          type: number
+        parLevel:
+          type: number
+    PortalTicket:
+      type: object
+      properties:
+        id:
+          type: string
+        channel:
+          type: string
+        status:
+          type: string
+        total:
+          type: string
+        processedAt:
+          type: string
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              quantity:
+                type: number
+    PortalPosTicketItemInput:
+      type: object
+      required: [menuItemId, quantity]
+      properties:
+        menuItemId:
+          type: string
+          format: uuid
+        quantity:
+          type: number
+          minimum: 0.01
+          maximum: 500
+    PortalCreateTicketRequest:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 25
+          items:
+            $ref: '#/components/schemas/PortalPosTicketItemInput'
+        paymentMethod:
+          type: string
+          enum: [Card, Cash, Online]
+          default: Card
+        tipAmount:
+          type: number
+          minimum: 0
+        locationId:
+          type: string
+          format: uuid
+        notes:
+          type: string
+          maxLength: 256
+    PortalCreateTicketResponse:
+      type: object
+      required:
+        - ticketId
+        - paymentId
+        - locationId
+        - subtotal
+        - taxAmount
+        - total
+        - tipAmount
+        - paymentMethod
+      properties:
+        ticketId:
+          type: string
+          format: uuid
+        paymentId:
+          type: string
+          format: uuid
+        locationId:
+          type: string
+          format: uuid
+        subtotal:
+          type: number
+        taxAmount:
+          type: number
+        total:
+          type: number
+        tipAmount:
+          type: number
+        paymentMethod:
+          type: string
+    PortalMenuItemUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 80
+        description:
+          type: string
+          maxLength: 256
+        taxRate:
+          type: number
+          minimum: 0
+          maximum: 50
+        price:
+          type: number
+          minimum: 0.01
+        currency:
+          type: string
+          minLength: 3
+          maxLength: 3
+        locationId:
+          type: string
+          format: uuid
+    PortalMenuItemUpdateResponse:
+      type: object
+      properties:
+        itemId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        taxRate:
+          type: number
+        price:
+          type: number
+        currency:
+          type: string
+        locationId:
+          type: string
+          format: uuid
+    PortalMenuModifier:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        priceDelta:
+          type: number
+        maxSelect:
+          type: integer
+          nullable: true
+    PortalMenuModifierAssignments:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          type: string
+          format: uuid
+    PortalMenuItemModifierUpdateRequest:
+      type: object
+      properties:
+        modifierIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+      required:
+        - modifierIds
+    PortalMenuItemModifierUpdateResponse:
+      type: object
+      properties:
+        itemId:
+          type: string
+          format: uuid
+        modifierIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+    PortalPaymentRecord:
+      type: object
+      properties:
+        id:
+          type: string
+        ticketId:
+          type: string
+        method:
+          type: string
+        status:
+          type: string
+        amount:
+          type: string
+        tipAmount:
+          type: string
+        processedAt:
+          type: string
+          description: Human-friendly timestamp (local time)
+        processedAtIso:
+          type: string
+          format: date-time
+          description: ISO timestamp of when the payment was processed
+    PortalPaymentsSnapshot:
+      type: object
+      properties:
+        summary:
+          type: object
+          properties:
+            totalToday:
+              type: string
+            totalWeek:
+              type: string
+            rangeTotal:
+              type: string
+              description: Total for the selected filter range (respecting method/date filters)
+            methods:
+              type: array
+              items:
+                type: object
+                properties:
+                  method:
+                    type: string
+                  amount:
+                    type: string
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/PortalPaymentRecord'
+    PortalReportingSnapshot:
+      type: object
+      properties:
+        revenueSeries:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+              total:
+                type: string
+        ticketSeries:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+              count:
+                type: integer
+        topCategories:
+          type: array
+          items:
+            type: object
+            properties:
+              category:
+                type: string
+              revenue:
+                type: string
+        categoryOptions:
+          type: array
+          description: Distinct categories available for filtering
+          items:
+            type: string
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              enum: [VALIDATION, AUTHN, AUTHZ, NOT_FOUND, CONFLICT, RATE_LIMIT, INTERNAL]
+            message:
+              type: string
+            details:
+              type: object
+              additionalProperties: true
+  responses:
+    ValidationError:
+      description: Request invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    AuthError:
+      description: Authentication failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ConflictError:
+      description: Operation conflicts with state
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+

@@ -1,0 +1,27 @@
+{
+  "name": "@nova/superadmin",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@nova/design-system": "workspace:*",
+    "@nova/module-registry": "workspace:*",
+    "@tanstack/react-query": "^5.51.3",
+    "next": "16.0.3",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@types/react": "^18.3.4",
+    "@types/react-dom": "^18.3.2",
+    "eslint": "9.39.1",
+    "eslint-config-next": "16.0.3",
+    "typescript": "^5.4.5"
+  }
+}

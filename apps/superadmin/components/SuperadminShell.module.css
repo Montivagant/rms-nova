@@ -1,0 +1,117 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.25rem clamp(1.5rem, 4vw, 2.5rem);
+  backdrop-filter: blur(14px);
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.85),
+    rgba(30, 41, 59, 0.7)
+  );
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brandMark {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.85rem;
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.35), rgba(129, 140, 248, 0.35));
+  color: rgba(226, 232, 240, 0.95);
+  font-size: 1.15rem;
+}
+
+.brandCopy {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.brandName {
+  font-weight: 700;
+  color: rgba(226, 232, 240, 0.96);
+  letter-spacing: 0.02em;
+}
+
+.brandSection {
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.8);
+}
+
+.nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  color: rgba(226, 232, 240, 0.85);
+  border: 1px solid transparent;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.navLink:hover {
+  border-color: rgba(148, 163, 184, 0.45);
+  color: rgba(226, 232, 240, 0.96);
+}
+
+.navLinkActive {
+  border-color: rgba(96, 165, 250, 0.45);
+  background: rgba(37, 99, 235, 0.25);
+  color: rgba(226, 232, 240, 0.98);
+}
+
+.headerMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.envBadge {
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  background-color: rgba(37, 99, 235, 0.25);
+  color: rgba(226, 232, 240, 0.9);
+  border: 1px solid rgba(96, 165, 250, 0.4);
+}
+
+.profileButton {
+  color: rgba(226, 232, 240, 0.85);
+}
+
+.mainArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1.5rem, 3.5vw, 2.5rem);
+  gap: 1.5rem;
+}
+

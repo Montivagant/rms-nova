@@ -1,0 +1,349 @@
+:root {
+  --nova-color-brand: #2563eb;
+  --nova-color-brand-hover: #1d4ed8;
+  --nova-color-surface: #ffffff;
+  --nova-color-surface-muted: #f8fafc;
+  --nova-color-border: #d0d5dd;
+  --nova-color-text: #111827;
+  --nova-color-text-muted: #475467;
+  --nova-radius-sm: 0.375rem;
+  --nova-radius-md: 0.5rem;
+  --nova-spacing-xs: 0.5rem;
+  --nova-spacing-sm: 0.75rem;
+  --nova-spacing-md: 1rem;
+  --nova-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+
+.nova-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: var(--nova-radius-sm);
+  border: 1px solid transparent;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.nova-button--sm {
+  font-size: 0.875rem;
+  padding: 0.35rem 0.6rem;
+}
+
+.nova-button--md {
+  font-size: 0.9rem;
+  padding: 0.5rem 0.9rem;
+}
+
+.nova-button--lg {
+  font-size: 1rem;
+  padding: 0.65rem 1rem;
+}
+
+.nova-button--primary {
+  background-color: var(--nova-color-brand);
+  color: white;
+}
+
+.nova-button--primary:hover {
+  background-color: var(--nova-color-brand-hover);
+}
+
+.nova-button--ghost {
+  background-color: transparent;
+  color: var(--nova-color-text);
+  border-color: transparent;
+}
+
+.nova-button--outline {
+  background-color: transparent;
+  color: var(--nova-color-brand);
+  border-color: var(--nova-color-brand);
+}
+
+.nova-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.nova-input {
+  width: 100%;
+  border-radius: var(--nova-radius-sm);
+  border: 1px solid var(--nova-color-border);
+  padding: 0.5rem 0.75rem;
+  color: var(--nova-color-text);
+  background-color: var(--nova-color-surface);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+  font-size: 0.95rem;
+}
+
+.nova-input:focus {
+  outline: none;
+  border-color: var(--nova-color-brand);
+  box-shadow: 0 0 0 1px var(--nova-color-brand);
+}
+
+.nova-input--error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.6);
+}
+
+.nova-select {
+  width: 100%;
+  border-radius: var(--nova-radius-sm);
+  border: 1px solid var(--nova-color-border);
+  padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+  color: var(--nova-color-text);
+  background-color: var(--nova-color-surface);
+  font-size: 0.95rem;
+  line-height: 1.4;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23475467' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+}
+
+.nova-select:focus {
+  outline: none;
+  border-color: var(--nova-color-brand);
+  box-shadow: 0 0 0 1px var(--nova-color-brand);
+}
+
+.nova-select--error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.6);
+}
+
+.nova-textarea {
+  width: 100%;
+  border-radius: var(--nova-radius-sm);
+  border: 1px solid var(--nova-color-border);
+  padding: 0.6rem 0.75rem;
+  color: var(--nova-color-text);
+  background-color: var(--nova-color-surface);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+  font-size: 0.95rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 5.5rem;
+}
+
+.nova-textarea:focus {
+  outline: none;
+  border-color: var(--nova-color-brand);
+  box-shadow: 0 0 0 1px var(--nova-color-brand);
+}
+
+.nova-textarea--error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.6);
+}
+
+.nova-card {
+  background-color: var(--nova-color-surface);
+  border-radius: var(--nova-radius-md);
+  border: 1px solid var(--nova-color-border);
+  box-shadow: var(--nova-shadow-sm);
+  padding: var(--nova-spacing-md);
+  color: var(--nova-color-text);
+}
+
+.nova-card__header {
+  margin-bottom: var(--nova-spacing-sm);
+  font-weight: 600;
+  color: var(--nova-color-text);
+}
+
+.nova-card__content {
+  color: var(--nova-color-text-muted);
+}
+
+.nova-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nova-spacing-xs);
+}
+
+.nova-form-field__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--nova-color-text);
+}
+
+.nova-form-field__required {
+  color: var(--nova-color-brand);
+  font-size: 0.95rem;
+}
+
+.nova-form-field__hint {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--nova-color-text-muted);
+}
+
+.nova-form-field__control {
+  display: flex;
+  flex-direction: column;
+}
+
+.nova-form-field__error {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #b42318;
+}
+
+.nova-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--nova-color-text);
+  cursor: pointer;
+}
+
+.nova-checkbox__input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nova-checkbox__box {
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--nova-color-border);
+  background-color: var(--nova-color-surface);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+  box-shadow: var(--nova-shadow-sm);
+}
+
+.nova-checkbox__input:focus-visible + .nova-checkbox__box {
+  outline: 2px solid var(--nova-color-brand);
+  outline-offset: 2px;
+}
+
+.nova-checkbox__input:checked + .nova-checkbox__box {
+  background-color: var(--nova-color-brand);
+  border-color: var(--nova-color-brand);
+}
+
+.nova-checkbox__input:indeterminate + .nova-checkbox__box {
+  background-color: var(--nova-color-brand);
+  border-color: var(--nova-color-brand);
+}
+
+.nova-checkbox__input:checked + .nova-checkbox__box::after,
+.nova-checkbox__input:indeterminate + .nova-checkbox__box::after {
+  content: "";
+  width: 0.6rem;
+  height: 0.6rem;
+  background-color: white;
+  border-radius: 0.1rem;
+}
+
+.nova-checkbox__label {
+  line-height: 1.2;
+}
+
+.nova-checkbox--disabled {
+  cursor: not-allowed;
+  color: var(--nova-color-text-muted);
+}
+
+.nova-checkbox--disabled .nova-checkbox__box {
+  border-color: var(--nova-color-border);
+  background-color: var(--nova-color-surface-muted);
+  box-shadow: none;
+}
+
+.nova-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nova-spacing-sm);
+}
+
+.nova-radio-group--horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.nova-radio-group__option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  color: var(--nova-color-text);
+}
+
+.nova-radio-group__input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nova-radio-group__control {
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 999px;
+  border: 1px solid var(--nova-color-border);
+  background-color: var(--nova-color-surface);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+  box-shadow: var(--nova-shadow-sm);
+}
+
+.nova-radio-group__input:focus-visible + .nova-radio-group__control {
+  outline: 2px solid var(--nova-color-brand);
+  outline-offset: 2px;
+}
+
+.nova-radio-group__input:checked + .nova-radio-group__control {
+  border-color: var(--nova-color-brand);
+}
+
+.nova-radio-group__input:checked + .nova-radio-group__control::after {
+  content: "";
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background-color: var(--nova-color-brand);
+}
+
+.nova-radio-group__label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  line-height: 1.2;
+}
+
+.nova-radio-group__description {
+  font-size: 0.85rem;
+  color: var(--nova-color-text-muted);
+}
+
+.nova-radio-group__option--disabled {
+  cursor: not-allowed;
+  color: var(--nova-color-text-muted);
+}
+
+.nova-radio-group__option--disabled .nova-radio-group__control {
+  border-color: var(--nova-color-border);
+  box-shadow: none;
+}
+
+.nova-radio-group__error {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #b42318;
+}

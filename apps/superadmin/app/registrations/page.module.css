@@ -1,0 +1,53 @@
+.container {
+  margin: 0 auto;
+  padding: clamp(2rem, 4vw, 3rem);
+  max-width: 960px;
+  display: grid;
+  gap: var(--nova-spacing-md);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--nova-spacing-md);
+  flex-wrap: wrap;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.75rem, 2.5vw, 2.25rem);
+  color: var(--nova-color-surface);
+}
+
+.subtitle {
+  margin: 0;
+  color: rgba(226, 232, 240, 0.8);
+  font-size: 0.95rem;
+}
+
+.filterField {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+}
+
+.filterField :global(.nova-form-field__label) {
+  color: rgba(226, 232, 240, 0.7);
+  font-size: 0.9rem;
+}
+
+.filterField :global(.nova-form-field__control) {
+  margin-top: 0.35rem;
+}
+
+.filterField :global(.nova-select) {
+  background-color: rgba(15, 23, 42, 0.5);
+  border-color: rgba(148, 163, 184, 0.35);
+  color: var(--nova-color-surface);
+}
+
+.filterField :global(.nova-select:focus) {
+  border-color: var(--nova-color-brand);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}

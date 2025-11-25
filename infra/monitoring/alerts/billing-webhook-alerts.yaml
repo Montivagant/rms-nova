@@ -1,0 +1,48 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: nova-billing-webhook-alerts
+  labels:
+    app.kubernetes.io/name: nova-billing-webhook-alerts
+    app.kubernetes.io/part-of: nova-rms
+spec:
+  groups:
+    - name: billing-webhook.reliability
+      interval: 1m
+      rules:
+        - alert: NovaBillingWebhookRetrySpike
+          annotations:
+            summary: "Nova billing webhook retries are spiking"
+            description: >
+              Retry attempts for billing webhooks have exceeded the expected threshold.
+              Investigate worker logs and dashboard nova-billing-webhooks for event_type trends.
+          expr: |
+            increase(nova_api_billing_webhook_total{status="retrying"}[5m]) > 10
+          for: 10m
+          labels:
+            severity: warning
+            service: nova-billing
+        - alert: NovaBillingWebhookFailures
+          annotations:
+            summary: "Nova billing webhooks are failing"
+            description: >
+              Billing webhook failures have occurred without corresponding successful processing.
+              Check bullmq queue depth and runbook replay steps.
+          expr: |
+            increase(nova_api_billing_webhook_total{status="failed"}[5m]) > 0
+          for: 5m
+          labels:
+            severity: critical
+            service: nova-billing
+        - alert: NovaBillingWebhookQueueBacklog
+          annotations:
+            summary: "Nova billing webhook queue backlog detected"
+            description: >
+              The BullMQ queue for billing webhooks has accumulated waiting jobs.
+              Consider scaling workers or inspecting upstream webhook volume.
+          expr: |
+            max_over_time(bull_queue_jobs_waiting{queue="billing:webhooks"}[5m]) > 100
+          for: 10m
+          labels:
+            severity: warning
+            service: nova-billing

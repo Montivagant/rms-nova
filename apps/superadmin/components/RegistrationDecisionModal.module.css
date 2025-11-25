@@ -1,0 +1,88 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.72);
+  display: grid;
+  place-items: center;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  z-index: 1000;
+}
+
+.dialog {
+  width: min(420px, 100%);
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 1.5rem;
+  padding: clamp(1.5rem, 4vw, 2rem);
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.5);
+  display: grid;
+  gap: var(--nova-spacing-sm);
+  color: var(--nova-color-surface);
+}
+
+.title {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.section {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.formField :global(.nova-form-field__label) {
+  color: rgba(226, 232, 240, 0.75);
+}
+
+.formField :global(.nova-form-field__hint) {
+  color: rgba(226, 232, 240, 0.5);
+}
+
+.formField :global(.nova-form-field__error) {
+  color: #fecaca;
+}
+
+.formField :global(.nova-select) {
+  background-color: rgba(30, 41, 59, 0.9);
+  color: var(--nova-color-surface);
+  border-color: rgba(148, 163, 184, 0.3);
+}
+
+.formField :global(.nova-textarea) {
+  background-color: rgba(30, 41, 59, 0.9);
+  color: var(--nova-color-surface);
+  border-color: rgba(148, 163, 184, 0.3);
+  min-height: 120px;
+}
+
+.formField :global(.nova-textarea--error) {
+  border-color: rgba(248, 113, 113, 0.9);
+  box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.25);
+}
+
+.error {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--nova-radius-sm);
+  background: rgba(239, 68, 68, 0.12);
+  color: #fecaca;
+  font-size: 0.9rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--nova-spacing-sm);
+  margin-top: var(--nova-spacing-xs);
+}
+
+.dangerButton {
+  background: rgba(239, 68, 68, 0.92);
+  border-color: rgba(239, 68, 68, 0.92);
+  color: #0f172a;
+}
+
+.dangerButton:hover {
+  background: rgba(220, 38, 38, 0.95);
+  border-color: rgba(220, 38, 38, 0.95);
+}

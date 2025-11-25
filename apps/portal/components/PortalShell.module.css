@@ -1,0 +1,136 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  background-color: #0f172a;
+}
+
+.sidebar {
+  width: 260px;
+  background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+  color: #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  border-right: 1px solid rgba(148, 163, 184, 0.2);
+  gap: 16px;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.brand span:first-child {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.plan {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  color: #cbd5f5;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.link span:last-child {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.linkActive {
+  border-color: rgba(56, 189, 248, 0.5);
+  background-color: rgba(56, 189, 248, 0.08);
+  color: #f8fafc;
+}
+
+.linkActive span:last-child {
+  color: #e0f2fe;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background-color: #f8fafc;
+}
+
+.header {
+  padding: 24px 32px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  background-color: #ffffff;
+}
+
+.headerTenant {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.headerTenant h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #0f172a;
+}
+
+.headerTenant span {
+  font-size: 0.9rem;
+  color: #475467;
+}
+
+.headerActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.main {
+  flex: 1;
+  padding: 32px;
+  min-height: 0;
+}
+
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .link {
+    flex: 1 1 140px;
+  }
+}

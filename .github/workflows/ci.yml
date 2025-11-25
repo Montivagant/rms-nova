@@ -1,0 +1,174 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: root
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U root"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Determine pnpm store path
+        id: pnpm-store
+        shell: bash
+        run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-store.outputs.path }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Install dependencies
+        id: install
+        shell: bash
+        run: |
+          start=$(date +%s)
+          pnpm install --frozen-lockfile
+          status=$?
+          end=$(date +%s)
+          echo "duration=$((end-start))" >> "$GITHUB_OUTPUT"
+          echo "duration_human=$(( (end-start)/60 ))m $(( (end-start)%60 ))s" >> "$GITHUB_OUTPUT"
+          exit $status
+
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Prepare databases
+        run: |
+          psql postgresql://root:root@localhost:5432/postgres <<'SQL'
+            DO 
+            BEGIN
+              IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'rms_app') THEN
+                CREATE ROLE rms_app WITH LOGIN PASSWORD 'Owner@123' NOSUPERUSER NOCREATEDB NOCREATEROLE;
+                ALTER ROLE rms_app SET client_encoding TO 'UTF8';
+                ALTER ROLE rms_app SET timezone TO 'UTC';
+              END IF;
+            END ;
+            DO 
+            BEGIN
+              IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'rms_dev') THEN
+                CREATE DATABASE rms_dev OWNER rms_app;
+              END IF;
+              IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'rms_test') THEN
+                CREATE DATABASE rms_test OWNER rms_app;
+              END IF;
+              IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'rms_prod') THEN
+                CREATE DATABASE rms_prod OWNER rms_app;
+              END IF;
+            END ;
+SQL
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Run unit tests
+        id: test-unit
+        shell: bash
+        run: |
+          start=$(date +%s)
+          pnpm test:unit
+          status=$?
+          end=$(date +%s)
+          echo "duration=$((end-start))" >> "$GITHUB_OUTPUT"
+          echo "duration_human=$(( (end-start)/60 ))m $(( (end-start)%60 ))s" >> "$GITHUB_OUTPUT"
+          exit $status
+
+      - name: Upload unit coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-unit
+          path: coverage/unit
+          if-no-files-found: warn
+
+      - name: Report unit coverage in PR
+        if: github.event_name == 'pull_request'
+        uses: zgosalvez/github-actions-report-lcov@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          lcov-file: coverage/unit/lcov.info
+          title: "Unit Test Coverage"
+          update-comment: true
+          minimum-coverage: 60
+
+      - name: Run migrations
+        env:
+          DATABASE_URL: postgresql://rms_app:Owner%40123@localhost:5432/rms_dev
+        run: pnpm --filter @nova/api db:migrate
+
+      - name: Run integration tests
+        env:
+          DATABASE_URL: postgresql://rms_app:Owner%40123@localhost:5432/rms_dev
+          TEST_DATABASE_URL: postgresql://rms_app:Owner%40123@localhost:5432/rms_test
+        id: test-integration
+        shell: bash
+        run: |
+          start=$(date +%s)
+          pnpm test:integration
+          status=$?
+          end=$(date +%s)
+          echo "duration=$((end-start))" >> "$GITHUB_OUTPUT"
+          echo "duration_human=$(( (end-start)/60 ))m $(( (end-start)%60 ))s" >> "$GITHUB_OUTPUT"
+          exit $status
+
+      - name: Build
+        id: build
+        shell: bash
+        run: |
+          start=$(date +%s)
+          pnpm build
+          status=$?
+          end=$(date +%s)
+          echo "duration=$((end-start))" >> "$GITHUB_OUTPUT"
+          echo "duration_human=$(( (end-start)/60 ))m $(( (end-start)%60 ))s" >> "$GITHUB_OUTPUT"
+          exit $status
+
+      - name: Publish CI summary
+        if: always()
+        shell: bash
+        run: |
+          echo "### CI Step Durations (approx)" >> "$GITHUB_STEP_SUMMARY"
+          if [[ -n "${{ steps.install.outputs.duration }}" ]]; then
+            echo "- Install dependencies: ${{ steps.install.outputs.duration_human }} (${{ steps.install.outputs.duration }}s)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [[ -n "${{ steps.test-unit.outputs.duration }}" ]]; then
+            echo "- Unit tests: ${{ steps.test-unit.outputs.duration_human }} (${{ steps.test-unit.outputs.duration }}s)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [[ -n "${{ steps.test-integration.outputs.duration }}" ]]; then
+            echo "- Integration tests: ${{ steps.test-integration.outputs.duration_human }} (${{ steps.test-integration.outputs.duration }}s)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [[ -n "${{ steps.build.outputs.duration }}" ]]; then
+            echo "- Build: ${{ steps.build.outputs.duration_human }} (${{ steps.build.outputs.duration }}s)" >> "$GITHUB_STEP_SUMMARY"
+          fi

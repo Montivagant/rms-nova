@@ -1,0 +1,127 @@
+.container {
+  display: grid;
+  gap: var(--nova-spacing-md);
+  padding: clamp(2rem, 5vw, 3rem);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--nova-spacing-sm);
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.9rem, 3vw, 2.4rem);
+  color: var(--nova-color-surface);
+}
+
+.subtitle {
+  margin: 0.25rem 0 0;
+  color: rgba(226, 232, 240, 0.7);
+  font-size: 0.95rem;
+}
+
+.metricsGrid {
+  display: grid;
+  gap: var(--nova-spacing-md);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.metricCard :global(.nova-card__content) {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.metricValue {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--nova-color-text);
+}
+
+.metricHelper {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--nova-color-text-muted);
+}
+
+.backlogSection {
+  display: grid;
+  gap: var(--nova-spacing-md);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.listRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.listValue {
+  font-weight: 600;
+  color: var(--nova-color-text);
+  display: block;
+  font-size: 1.1rem;
+}
+
+.listLabel {
+  color: var(--nova-color-text);
+  font-size: 0.95rem;
+}
+
+.listMetric {
+  font-weight: 600;
+  color: var(--nova-color-text);
+  font-size: 0.95rem;
+}
+
+.listHelper {
+  color: var(--nova-color-text-muted);
+  font-size: 0.85rem;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  color: var(--nova-color-text-muted);
+  font-size: 0.85rem;
+  gap: var(--nova-spacing-sm);
+}
+
+.listMeta {
+  color: var(--nova-color-text-muted);
+  font-size: 0.85rem;
+}
+
+.emptyMessage {
+  margin: 0;
+  color: var(--nova-color-text-muted);
+  font-size: 0.9rem;
+}
+
+.windowPicker :global(.nova-form-field__label) {
+  color: var(--nova-color-text);
+  font-size: 0.8rem;
+}
+
+.windowPicker :global(.nova-form-field__control) {
+  margin-top: 0.3rem;
+}
+
+.windowPicker :global(.nova-select) {
+  min-width: 8rem;
+}

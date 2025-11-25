@@ -1,0 +1,6 @@
+Nova stack has been deployed.
+
+API Service: {{ include "nova-stack.fullname" . }}-api on port {{ .Values.api.service.port }}
+Worker Deployment: {{ include "nova-stack.fullname" . }}-worker
+
+Use `kubectl get pods -l app.kubernetes.io/instance={{ .Release.Name }}` to check pod status.

@@ -1,0 +1,36 @@
+.container {
+  min-height: 100vh;
+  padding: clamp(2rem, 5vw, 4rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heroCard {
+  max-width: 640px;
+  width: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(37, 99, 235, 0.08),
+    rgba(79, 70, 229, 0.12)
+  );
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.copy {
+  margin-bottom: var(--nova-spacing-md);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(226, 232, 240, 0.92);
+}
+
+.actions {
+  display: flex;
+  gap: var(--nova-spacing-sm);
+}
+
+.linkWrapper {
+  display: inline-flex;
+  text-decoration: none;
+}

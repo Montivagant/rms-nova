@@ -1,0 +1,23 @@
+import type { Meta, StoryObj } from "@storybook/react";
+import { Input } from "./Input";
+
+const meta: Meta<typeof Input> = {
+  title: "Primitives/Input",
+  component: Input,
+  args: {
+    placeholder: "Search tenants"
+  }
+};
+
+export default meta;
+
+type Story = StoryObj<typeof Input>;
+
+export const Default: Story = {};
+
+export const WithError: Story = {
+  args: {
+    error: true,
+    defaultValue: "invalid@example.com"
+  }
+};

@@ -1,0 +1,2 @@
+-- Deprecated: see db/migrations for versioned DDL
+-- Keeping placeholder so references in docs resolve.

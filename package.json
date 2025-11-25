@@ -1,0 +1,52 @@
+{
+  "name": "nova-rms",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@9.9.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20.10.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "lint": "biome lint .",
+    "format": "biome format .",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "test": "pnpm test:unit && pnpm test:integration",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:portal": "playwright test --config=playwright.portal.config.ts",
+    "build": "pnpm --filter @nova/api build && pnpm --filter @nova/worker build",
+    "dev": "pnpm --filter @nova/api dev",
+    "dev:backend": "concurrently --names \"api,worker\" \"pnpm --filter @nova/api dev\" \"pnpm --filter @nova/worker dev\"",
+    "dev:stack": "concurrently --names \"api,worker,superadmin,portal\" \"pnpm --filter @nova/api dev\" \"pnpm --filter @nova/worker dev\" \"pnpm dev:superadmin\" \"pnpm dev:portal\"",
+    "dev:superadmin": "pnpm --filter @nova/superadmin dev",
+    "dev:portal": "pnpm --filter @nova/portal dev",
+    "dev:payments-sandbox": "tsx scripts/payment-provider-sandbox.ts",
+    "db:migrate": "pnpm --filter @nova/api db:migrate",
+    "drill:billing": "tsx tests/drills/run-billing-plan-drill.ts",
+    "drill:check:staging": "tsx tests/drills/check-staging-drill.ts",
+    "seed:sample-data": "tsx scripts/seed-sample-data.ts",
+    "seed:tenant": "tsx scripts/seed-tenant-via-api.ts"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^20.19.25",
+    "@types/pg": "^8.15.6",
+    "@vitest/coverage-v8": "^1.6.1",
+    "@vitest/ui": "^1.6.1",
+    "concurrently": "^9.2.1",
+    "dotenv": "^16.6.1",
+    "fastify": "^4.29.1",
+    "jsdom": "^27.2.0",
+    "pg": "^8.16.3",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^1.6.1"
+  }
+}

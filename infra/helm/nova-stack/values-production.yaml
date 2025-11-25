@@ -1,0 +1,17 @@
+global:
+  imageRegistry: gcr.io
+  imageTag: production
+
+api:
+  image:
+    repository: rms-nova/nova-rms-api
+    tag: production
+    pullPolicy: IfNotPresent
+  replicaCount: 4
+
+worker:
+  image:
+    repository: rms-nova/nova-rms-worker
+    tag: production
+    pullPolicy: IfNotPresent
+  replicaCount: 2

@@ -1,0 +1,19 @@
+{
+  "name": "@nova/billing",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --sourcemap",
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "tsup": "^7.2.0",
+    "tsx": "^4.10.2"
+  }
+}
