@@ -8,6 +8,36 @@
 ## CLI prerequisites
 - Run `pwsh tools/install-tools.ps1` (or copy the commands inside) to download Helm/Terraform into `tools/`. The binaries are intentionally excluded from git history; rerun the script whenever you need to bump versions.
 
+## Local databases without Docker
+If Docker isn’t available (e.g., Codex Universal container), provision Postgres + Redis directly on Ubuntu:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y postgresql postgresql-contrib redis-server
+sudo service postgresql start
+sudo service redis-server start
+
+sudo -u postgres psql <<'SQL'
+CREATE ROLE rms_app WITH LOGIN PASSWORD 'Owner@123' NOSUPERUSER NOCREATEDB NOCREATEROLE;
+ALTER ROLE rms_app SET client_encoding TO 'UTF8';
+ALTER ROLE rms_app SET timezone TO 'UTC';
+CREATE DATABASE rms_dev OWNER rms_app;
+CREATE DATABASE rms_test OWNER rms_app;
+SQL
+```
+
+Export the expected environment variables (if they are not already configured in your Codex environment):
+
+```bash
+export DATABASE_URL=postgres://rms_app:Owner@123@localhost:5432/rms_dev
+export TEST_DATABASE_URL=postgres://rms_app:Owner@123@localhost:5432/rms_test
+export REDIS_URL=redis://localhost:6379
+export BILLING_WEBHOOK_QUEUE_NAME=billing-webhooks
+export PAYMENT_STATUS_QUEUE_NAME=payment-status
+```
+
+Run `pnpm --filter @nova/api db:migrate` to prime the schema, then `pnpm dev:stack` to launch API/worker/portals.
+
 ## Minikube Container
 - **Name**: `minikube`
 - **Ports** (container -> host):
